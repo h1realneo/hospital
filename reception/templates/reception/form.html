@@ -1,0 +1,85 @@
+{% extends "reception/index.html" %}
+{% load staticfiles %}
+    {% block base %}
+    <p>Для записи на прием заполните форму, мы свяжешься с вами по номеру указанному в форме.Время работы поликлиники:
+        пн - пт с 9:00 до 18:00
+    </p>
+    {% endblock %}
+{% block form %}
+    <div align='center' id='cerror2'></div>
+    <form id="my_form" class="form-horizontal" action="{% url 'reception:appointments' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input value="Отправить" type="submit" name="submit">
+    </form>
+    <script>$(function () {
+    	$("#id_time").wrap("<div class='control-group'></div>");
+        $("#id_doctor").change(function () {
+            $("#id_date").val('')
+            $(".remove").remove()
+        })
+        function Ajax() {
+            doctor = $('#id_doctor').val(),
+                    date = $('#id_date').val(),
+                    $(".remove").remove(),
+                    $.ajax({
+                        url: "{% url 'reception:ajax' %}",
+                        data: 'doctor=' + doctor + '&date=' + date,
+                        dataType: 'json',
+                        type: 'get',
+                        success: function (data) {
+                            console.log(data.hours.length == [].length)
+                            if (data.hours.length != [].length){
+                            	for (i = 0; i < data.hours.length; i++) {
+                                $("#id_time").append("<option class='remove' value=" + data.hours[i] + ">" + data.hours[i] + "</option>");
+                            	}
+                            }
+                            	else{
+                            		$(".control-group").append("<span class='help-inline remove'>В этот день не осталось свободных часов приема</span>");
+                            		console.log($('#id_time').val())
+                            	}
+                            
+                        },
+                        error: function (data) {
+                            alert("Repeat")
+                        }
+                    });
+        }
+
+        $("#id_date").datepicker({
+            beforeShowDay: $.datepicker.noWeekends,
+            onSelect: Ajax,
+            minDate: "0",
+            maxDate: "+1m +1w +3d",
+            dateFormat: "dd/mm/yy",
+            monthNames: ['Январь', 'Февраль', 'Март', 'Апрель',
+                'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь',
+                'Октябрь', 'Ноябрь', 'Декабрь'],
+            dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+            firstDay: 1,
+        });
+        $("#my_form").trigger('reset')
+        $('#my_form').submit(function (eventObject) {
+
+            // Cюда выведем наши сообщения об ошибке
+            $('#cerror2').text("");
+
+            // Если поле автор равно пустоте
+            if ($('#id_date').val() == "" || $('#id_time').val() == null || $('#id_name_patient').val() == "" || $('#id_surname_patient').val() == "" || 
+            	$('#id_patronymic_patient').val() == "" || $('#id_number_patient').val() == "") {
+                // то выводим сообщение в #my_form об ошибке. и дальше думаю все ясно)
+                eventObject.preventDefault();
+                $('#cerror2').prepend("<li>Заполните пожалуйста все поля</li>").css(
+                        {
+                            'font-family': 'Verdana',
+                            'font-size': '12px',
+                            'border': '2px solid #cc0000',
+                            'color': '#000',
+                            'margin': '20px',
+                            'padding': '7px'
+                        });
+            }
+        });
+    });
+    </script>
+{% endblock %}

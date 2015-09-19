@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="../static/reception/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/reception/bootstrap/css/bootstrap-responsive.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/reception/jquery-ui-1.11.4.custom/jquery-ui.css"/>
+    <script src="../static/reception/jquery-ui-1.11.4.custom/external/jquery/jquery.js"></script>
+    <script src="../static/reception/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../static/reception/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="#">Поликлиника</a>
+    <ul class="nav">
+      <li><a href="{% url 'reception:base' %}">На главную</a></li>
+      <li><a href="{% url 'reception:appointments' %}">Записаться на прием</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="container">
+    {% block base %}
+    <h1>Приветствуем вас на сайте нашей поликлиники</h1>
+    {% endblock %}
+    {% block form %}
+    {% endblock %}
+</div>
+<!-- /container -->
+
+</div>
+</body>
+</html>
